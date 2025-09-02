@@ -1,5 +1,5 @@
 {
-  "name": "@rustcoder/capacitor-video-player",
+  "name": "@trustcoder/capacitor-video-player",
   "version": "7.0.0-beta.1",
   "description": "custom Native Capacitor plugin to play a video",
   "main": "dist/plugin.cjs.js",
