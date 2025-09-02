@@ -1,6 +1,6 @@
 {
   "name": "@trustcoder/capacitor-video-player",
-  "version": "7.0.0-beta.1",
+  "version": "7.0.0-beta.2",
   "description": "custom Native Capacitor plugin to play a video",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -60,7 +60,7 @@
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "eslint": "^8.57.0",
-    "hls.js": "^1.5.18",
+    "hls.js": "^1.6.11",
     "prettier": "^3.4.2",
     "prettier-plugin-java": "^2.6.6",
     "rimraf": "^6.0.1",
