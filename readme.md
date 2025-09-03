@@ -47,7 +47,7 @@ meaning that it will not work in IE11 without additional JavaScript transformati
 ## Installation
 
   ```bash
-  npm install --save @trustcoder/capacitor-video-player
+  npm install --save @trust-coder/capacitor-video-player
   npx cap sync
   npx cap sync @capacitor-community/electron
   ```
