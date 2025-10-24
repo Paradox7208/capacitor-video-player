@@ -1,3 +1,5 @@
+import type { PluginListenerHandle } from '@capacitor/core';
+
 export interface CapacitorVideoPlayerPlugin {
   /**
    * Echo
@@ -90,7 +92,12 @@ export interface CapacitorVideoPlayerPlugin {
    * Exit player
    *
    */
-  exitPlayer(): Promise<capVideoPlayerResult>;
+   exitPlayer(): Promise<capVideoPlayerResult>;
+
+   addListener(
+       event: 'jeepCapVideoPlayerPlay',
+       listener: (event: capVideoListener) => void,
+   ): Promise<PluginListenerHandle>;
 }
 export interface capEchoOptions {
   /**

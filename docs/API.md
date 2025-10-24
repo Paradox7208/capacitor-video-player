@@ -22,6 +22,7 @@
 * [`showController()`](#showcontroller)
 * [`isControllerIsFullyVisible()`](#iscontrollerisfullyvisible)
 * [`exitPlayer()`](#exitplayer)
+* [`addListener('jeepCapVideoPlayerPlay', ...)`](#addlistenerjeepcapvideoplayerplay-)
 * [Interfaces](#interfaces)
 
 </docgen-index>
@@ -469,6 +470,22 @@ Exit player
 --------------------
 
 
+### addListener('jeepCapVideoPlayerPlay', ...)
+
+```typescript
+addListener(event: 'jeepCapVideoPlayerPlay', listener: (event: capVideoListener) => void) => Promise<PluginListenerHandle>
+```
+
+| Param          | Type                                                                              |
+| -------------- | --------------------------------------------------------------------------------- |
+| **`event`**    | <code>'jeepCapVideoPlayerPlay'</code>                                             |
+| **`listener`** | <code>(event: <a href="#capvideolistener">capVideoListener</a>) =&gt; void</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
+
+--------------------
+
+
 ### Interfaces
 
 
@@ -563,6 +580,21 @@ Exit player
 | -------------- | ------------------- | -------------------------------------- |
 | **`playerId`** | <code>string</code> | Id of DIV Element parent of the player |
 | **`rate`**     | <code>number</code> | Rate value                             |
+
+
+#### PluginListenerHandle
+
+| Prop         | Type                                      |
+| ------------ | ----------------------------------------- |
+| **`remove`** | <code>() =&gt; Promise&lt;void&gt;</code> |
+
+
+#### capVideoListener
+
+| Prop              | Type                | Description                                |
+| ----------------- | ------------------- | ------------------------------------------ |
+| **`playerId`**    | <code>string</code> | Id of DIV Element parent of the player     |
+| **`currentTime`** | <code>number</code> | Video current time when listener trigerred |
 
 </docgen-api>
 

@@ -318,6 +318,30 @@
           "capVideoPlayerResult"
         ],
         "slug": "exitplayer"
+      },
+      {
+        "name": "addListener",
+        "signature": "(event: 'jeepCapVideoPlayerPlay', listener: (event: capVideoListener) => void) => Promise<PluginListenerHandle>",
+        "parameters": [
+          {
+            "name": "event",
+            "docs": "",
+            "type": "'jeepCapVideoPlayerPlay'"
+          },
+          {
+            "name": "listener",
+            "docs": "",
+            "type": "(event: capVideoListener) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "capVideoListener"
+        ],
+        "slug": "addlistenerjeepcapvideoplayerplay-"
       }
     ],
     "properties": []
@@ -674,6 +698,45 @@
           "name": "rate",
           "tags": [],
           "docs": "Rate value",
+          "complexTypes": [],
+          "type": "number | undefined"
+        }
+      ]
+    },
+    {
+      "name": "PluginListenerHandle",
+      "slug": "pluginlistenerhandle",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "remove",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "() => Promise<void>"
+        }
+      ]
+    },
+    {
+      "name": "capVideoListener",
+      "slug": "capvideolistener",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "playerId",
+          "tags": [],
+          "docs": "Id of DIV Element parent of the player",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "currentTime",
+          "tags": [],
+          "docs": "Video current time when listener trigerred",
           "complexTypes": [],
           "type": "number | undefined"
         }
