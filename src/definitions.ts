@@ -93,11 +93,6 @@ export interface CapacitorVideoPlayerPlugin {
    *
    */
    exitPlayer(): Promise<capVideoPlayerResult>;
-
-   addListener(
-       event: 'jeepCapVideoPlayerPlay',
-       listener: (event: capVideoListener) => void,
-   ): Promise<PluginListenerHandle>;
 }
 export interface capEchoOptions {
   /**
