@@ -71,6 +71,9 @@ open class FullScreenVideoPlayerView: UIView {
         if displayMode == "portrait" {
             self.videoPlayer = PortraitAVPlayerController()
         }
+        if displayMode == "user_landscape" {
+            self.videoPlayer = LandscapeAVPlayerController()
+        }
         self._showControls = showControls
         self._title = title
         self._smallTitle = smallTitle

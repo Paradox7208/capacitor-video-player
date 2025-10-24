@@ -237,6 +237,9 @@ public class FullscreenExoPlayerFragment extends Fragment {
     if (displayMode.equals("portrait")) {
       mAct.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
+    if (displayMode.equals("user_landscape")) {
+      mAct.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+    }
     if (!showControls) {
       styledPlayerView.setUseController(false);
     } else {
@@ -601,10 +604,31 @@ public class FullscreenExoPlayerFragment extends Fragment {
       if (
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
       ) {
-        pictureInPictureParams = new PictureInPictureParams.Builder();
         // setup height and width of the PIP window
-        Rational aspectRatio = new Rational(player.getVideoFormat().width, player.getVideoFormat().height);
-        pictureInPictureParams.setAspectRatio(aspectRatio).build();
+
+        int videoWidth = 0;
+        int videoHeight = 0;
+        Float ratio = (new Rational(9, 16).floatValue());
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            videoWidth = player.getVideoFormat().width;
+            videoHeight = (int)(videoWidth * ratio);
+        } else {
+            videoHeight = player.getVideoFormat().height;
+            videoWidth = (int)(videoHeight * ratio);
+        }
+
+        pictureInPictureParams = new PictureInPictureParams.Builder();
+        pictureInPictureParams.setAspectRatio(new Rational(videoWidth, videoHeight));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+          pictureInPictureParams.setAutoEnterEnabled(true);
+          pictureInPictureParams.setSeamlessResizeEnabled(true);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          pictureInPictureParams.setExpandedAspectRatio(new Rational(videoWidth, videoHeight));
+        }
+
         getActivity().enterPictureInPictureMode(pictureInPictureParams.build());
         Log.v(TAG, "PIP break 2");
       } else {
