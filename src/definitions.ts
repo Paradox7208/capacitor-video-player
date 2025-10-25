@@ -1,3 +1,5 @@
+import type { PluginListenerHandle } from '@capacitor/core';
+
 export interface CapacitorVideoPlayerPlugin {
   /**
    * Echo
@@ -91,6 +93,51 @@ export interface CapacitorVideoPlayerPlugin {
    *
    */
   exitPlayer(): Promise<capVideoPlayerResult>;
+  /**
+   * Emitted when the video is ready
+   *
+   */
+  addListener(
+    event: 'jeepCapVideoPlayerReady',
+    listener: (event: capVideoListener) => void,
+  ): Promise<PluginListenerHandle>;
+  /**
+   * Emitted when the video start to play
+   *
+   */
+  addListener(
+    event: 'jeepCapVideoPlayerPlay',
+    listener: (event: capVideoListener) => void,
+  ): Promise<PluginListenerHandle>;
+  /**
+   * Emitted when the video is paused
+   *
+   */
+  addListener(
+    event: 'jeepCapVideoPlayerPause',
+    listener: (event: capVideoListener) => void,
+  ): Promise<PluginListenerHandle>;
+  /**
+   * Emitted when the video has ended
+   *
+   */
+  addListener(
+    event: 'jeepCapVideoPlayerEnded',
+    listener: (event: capVideoListener) => void,
+  ): Promise<PluginListenerHandle>;
+  /**
+   * Emitted when the Exit button is clicked
+   *
+   */
+  addListener(
+    event: 'jeepCapVideoPlayerExit',
+    listener: (event: capExitListener) => void,
+  ): Promise<PluginListenerHandle>;
+  /**
+   * Removes all event listeners
+   *
+   */
+  removeAllListeners(): Promise<void>;
 }
 export interface capEchoOptions {
   /**
