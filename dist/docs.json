@@ -321,6 +321,30 @@
       },
       {
         "name": "addListener",
+        "signature": "(event: 'jeepCapVideoPlayerReady', listener: (event: capVideoListener) => void) => Promise<PluginListenerHandle>",
+        "parameters": [
+          {
+            "name": "event",
+            "docs": "",
+            "type": "'jeepCapVideoPlayerReady'"
+          },
+          {
+            "name": "listener",
+            "docs": "",
+            "type": "(event: capVideoListener) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle>",
+        "tags": [],
+        "docs": "Emitted when the video is ready",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "capVideoListener"
+        ],
+        "slug": "addlistenerjeepcapvideoplayerready-"
+      },
+      {
+        "name": "addListener",
         "signature": "(event: 'jeepCapVideoPlayerPlay', listener: (event: capVideoListener) => void) => Promise<PluginListenerHandle>",
         "parameters": [
           {
@@ -336,12 +360,94 @@
         ],
         "returns": "Promise<PluginListenerHandle>",
         "tags": [],
-        "docs": "",
+        "docs": "Emitted when the video start to play",
         "complexTypes": [
           "PluginListenerHandle",
           "capVideoListener"
         ],
         "slug": "addlistenerjeepcapvideoplayerplay-"
+      },
+      {
+        "name": "addListener",
+        "signature": "(event: 'jeepCapVideoPlayerPause', listener: (event: capVideoListener) => void) => Promise<PluginListenerHandle>",
+        "parameters": [
+          {
+            "name": "event",
+            "docs": "",
+            "type": "'jeepCapVideoPlayerPause'"
+          },
+          {
+            "name": "listener",
+            "docs": "",
+            "type": "(event: capVideoListener) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle>",
+        "tags": [],
+        "docs": "Emitted when the video is paused",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "capVideoListener"
+        ],
+        "slug": "addlistenerjeepcapvideoplayerpause-"
+      },
+      {
+        "name": "addListener",
+        "signature": "(event: 'jeepCapVideoPlayerEnded', listener: (event: capVideoListener) => void) => Promise<PluginListenerHandle>",
+        "parameters": [
+          {
+            "name": "event",
+            "docs": "",
+            "type": "'jeepCapVideoPlayerEnded'"
+          },
+          {
+            "name": "listener",
+            "docs": "",
+            "type": "(event: capVideoListener) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle>",
+        "tags": [],
+        "docs": "Emitted when the video has ended",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "capVideoListener"
+        ],
+        "slug": "addlistenerjeepcapvideoplayerended-"
+      },
+      {
+        "name": "addListener",
+        "signature": "(event: 'jeepCapVideoPlayerExit', listener: (event: capExitListener) => void) => Promise<PluginListenerHandle>",
+        "parameters": [
+          {
+            "name": "event",
+            "docs": "",
+            "type": "'jeepCapVideoPlayerExit'"
+          },
+          {
+            "name": "listener",
+            "docs": "",
+            "type": "(event: capExitListener) => void"
+          }
+        ],
+        "returns": "Promise<PluginListenerHandle>",
+        "tags": [],
+        "docs": "Emitted when the Exit button is clicked",
+        "complexTypes": [
+          "PluginListenerHandle",
+          "capExitListener"
+        ],
+        "slug": "addlistenerjeepcapvideoplayerexit-"
+      },
+      {
+        "name": "removeAllListeners",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "Removes all event listeners",
+        "complexTypes": [],
+        "slug": "removealllisteners"
       }
     ],
     "properties": []
@@ -732,6 +838,29 @@
           "docs": "Id of DIV Element parent of the player",
           "complexTypes": [],
           "type": "string | undefined"
+        },
+        {
+          "name": "currentTime",
+          "tags": [],
+          "docs": "Video current time when listener trigerred",
+          "complexTypes": [],
+          "type": "number | undefined"
+        }
+      ]
+    },
+    {
+      "name": "capExitListener",
+      "slug": "capexitlistener",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "dismiss",
+          "tags": [],
+          "docs": "Dismiss value true or false",
+          "complexTypes": [],
+          "type": "boolean | undefined"
         },
         {
           "name": "currentTime",
