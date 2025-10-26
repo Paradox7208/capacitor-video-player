@@ -35,11 +35,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.mediarouter.app.MediaRouteButton;
 import androidx.mediarouter.media.MediaControlIntent;
 import androidx.mediarouter.media.MediaRouteSelector;
@@ -330,8 +332,35 @@ public class FullscreenExoPlayerFragment extends Fragment {
                 } else {
                   live_text.setVisibility(View.VISIBLE);
                 }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+                  // setup height and width of the PIP window
+                  int videoWidth = player.getVideoFormat().width;
+                  int videoHeight = player.getVideoFormat().height;
+                  Float ratio = (new Rational(9, 16).floatValue());
+
+                  if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    videoHeight = (int)(videoWidth * ratio);
+                  } else {
+                    videoWidth = (int)(videoHeight * ratio);
+                  }
+
+                  pictureInPictureParams = new PictureInPictureParams.Builder();
+                  pictureInPictureParams.setAspectRatio(new Rational(videoWidth, videoHeight));
+
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    pictureInPictureParams.setAutoEnterEnabled(true);
+                    pictureInPictureParams.setSeamlessResizeEnabled(true);
+                  }
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    pictureInPictureParams.setExpandedAspectRatio(new Rational(videoWidth, videoHeight));
+                  }
+
+                  getActivity().setPictureInPictureParams(pictureInPictureParams.build());
+                }
               } else {
                 Log.v(TAG, "**** in ExoPlayer.STATE_READY isPlaying " + player.isPlaying());
+                updatePipAutoEnterEnabledByIsPlaying();
                 if (player.isPlaying()) {
                   Log.v(TAG, "**** in ExoPlayer.STATE_READY going to notify playerItemPlay ");
                   NotificationCenter.defaultCenter().postNotification("playerItemPlay", info);
@@ -397,6 +426,13 @@ public class FullscreenExoPlayerFragment extends Fragment {
       if (savedInstanceState != null) {
         mCurrentPosition = savedInstanceState.getInt(PLAYBACK_TIME);
       }
+
+      getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+          backPressed();
+        }
+      });
 
       getActivity()
         .runOnUiThread(
@@ -540,7 +576,8 @@ public class FullscreenExoPlayerFragment extends Fragment {
         packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) &&
         isPIPModeeEnabled &&
         pipEnabled &&
-        playerReady // <- playerReady: this prevents a crash if the user presses back before the player is ready (when enters in pip mode and tries to get the aspect ratio)
+        playerReady && // <- playerReady: this prevents a crash if the user presses back before the player is ready (when enters in pip mode and tries to get the aspect ratio)
+        player.isPlaying()
     ) {
       pictureInPictureMode();
     } else {
@@ -596,53 +633,7 @@ public class FullscreenExoPlayerFragment extends Fragment {
    */
   private void pictureInPictureMode() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
-      styledPlayerView.setUseController(false);
-      styledPlayerView.setControllerAutoShow(false);
-      linearLayout.setVisibility(View.INVISIBLE);
-      Log.v(TAG, "PIP break 1");
-      // require android O or higher
-      if (
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
-      ) {
-        // setup height and width of the PIP window
-
-        int videoWidth = 0;
-        int videoHeight = 0;
-        Float ratio = (new Rational(9, 16).floatValue());
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            videoWidth = player.getVideoFormat().width;
-            videoHeight = (int)(videoWidth * ratio);
-        } else {
-            videoHeight = player.getVideoFormat().height;
-            videoWidth = (int)(videoHeight * ratio);
-        }
-
-        pictureInPictureParams = new PictureInPictureParams.Builder();
-        pictureInPictureParams.setAspectRatio(new Rational(videoWidth, videoHeight));
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-          pictureInPictureParams.setAutoEnterEnabled(true);
-          pictureInPictureParams.setSeamlessResizeEnabled(true);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-          pictureInPictureParams.setExpandedAspectRatio(new Rational(videoWidth, videoHeight));
-        }
-
-        getActivity().enterPictureInPictureMode(pictureInPictureParams.build());
-        Log.v(TAG, "PIP break 2");
-      } else {
-        getActivity().enterPictureInPictureMode();
-        Log.v(TAG, "PIP break 3");
-      }
-      isInPictureInPictureMode = getActivity().isInPictureInPictureMode();
-      if (sturi != null) {
-        setSubtitle(true);
-      }
-      if (player != null) play();
-
-      handler.postDelayed(mRunnable, 100);
-      Log.v(TAG, "PIP break 4");
+      getActivity().enterPictureInPictureMode();
     } else {
       Log.v(TAG, "pictureInPictureMode: doesn't support PIP");
     }
@@ -736,6 +727,40 @@ public class FullscreenExoPlayerFragment extends Fragment {
     }
   }
 
+  @Override
+  public void onPictureInPictureModeChanged(boolean isInPipMode) {
+      isInPictureInPictureMode = isInPipMode;
+
+      if (getLifecycle().getCurrentState() == Lifecycle.State.CREATED) {
+        getActivity().finishAndRemoveTask();
+      }
+      else if (getLifecycle().getCurrentState() == Lifecycle.State.STARTED){
+        if (isInPictureInPictureMode) {
+          styledPlayerView.setUseController(false);
+          styledPlayerView.setControllerAutoShow(false);
+          linearLayout.setVisibility(View.INVISIBLE);
+
+          if (sturi != null) {
+            setSubtitle(true);
+          }
+
+          if (player != null) {
+            play();
+          }
+          
+          handler.postDelayed(mRunnable, 100);
+        } else {
+          if (!showControls) {
+            styledPlayerView.setUseController(false);
+          } else {
+            styledPlayerView.setUseController(true);
+          }
+        }
+      }
+
+      super.onPictureInPictureModeChanged(isInPipMode);
+  }
+
   /**
    * Release the player
    */
@@ -752,6 +777,7 @@ public class FullscreenExoPlayerFragment extends Fragment {
       player = null;
       showSystemUI();
       resetVariables();
+      updatePipAutoEnterEnabled(false);
       if (chromecast) {
         castPlayer.release();
         castPlayer = null;
@@ -870,6 +896,19 @@ public class FullscreenExoPlayerFragment extends Fragment {
     mediaSession.setActive(true);
 
     NotificationCenter.defaultCenter().postNotification("initializePlayer", info);
+  }
+
+  private void updatePipAutoEnterEnabled(boolean isEnabled) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      pictureInPictureParams.setAutoEnterEnabled(isEnabled);
+      getActivity().setPictureInPictureParams(pictureInPictureParams.build());
+    }
+  }
+
+  private void updatePipAutoEnterEnabledByIsPlaying() {
+    if (player != null) {
+      updatePipAutoEnterEnabled(player.isPlaying());
+    }
   }
 
   private void setSubtitle(boolean transparent) {
@@ -1425,6 +1464,11 @@ public class FullscreenExoPlayerFragment extends Fragment {
   }
 
   private void adjustAspectRatio() {
+    // adjustAspectRatio gets called by onConfigurationChanged. Do not call setResizeMode when PIP state is closing.
+    if (getLifecycle().getCurrentState() == Lifecycle.State.CREATED) {
+      return;
+    }
+
     if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
       styledPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
     } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
